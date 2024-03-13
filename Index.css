@@ -1,0 +1,55 @@
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column; /* Alineación vertical */
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0; /* Color de fondo */
+    font-family: 'Arial', sans-serif; /* Tipografía */
+}
+
+h1 {
+    background-color: #336699; /* Color de fondo del título */
+    color: white; /* Color del texto del título */
+    padding: 10px 20px; /* Espaciado interno del título */
+    text-align: center; /* Centrar el texto del título */
+    margin-bottom: 20px; /* Margen inferior para separarlo del marco de la cámara */
+}
+
+.camera-container {
+    position: relative;
+    width: 300px; /* Ancho del marco de la cámara */
+    height: 300px; /* Altura del marco de la cámara */
+    border: 2px solid #333; /* Color y grosor del borde del marco de la cámara */
+    border-radius: 5px; /* Radio de borde para suavizar las esquinas */
+    overflow: hidden; /* Oculta el contenido que se desborda del marco */
+    margin-bottom: 20px; /* Margen inferior para separarlo del botón */
+}
+
+.btn {
+    background-color: #336699; /* Color de fondo del botón */
+    color: white; /* Color del texto del botón */
+    padding: 10px 20px; /* Espaciado interno del botón */
+    border: none; /* Elimina el borde del botón */
+    border-radius: 5px; /* Radio de borde para suavizar las esquinas */
+    cursor: pointer; /* Cambia el cursor al pasar por encima del botón */
+}
+
+.my-button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.my-button:hover {
+    background-color: #45a049;
+}
+
+.my-button:active {
+    background-color: #3e8e41;
+}
