@@ -1,22 +1,36 @@
 function iniciarEscaneo() {
-    var scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
+    var scanner = new Instascan.Scanner({ video: document.createElement('canvas') }); // Utiliza un elemento de Canvas en lugar de video
     scanner.addListener('scan', function (contenidoQR) {
         // Una vez que se escanea el código QR, se envían los datos a Google Sheets
         enviarDatosAGoogleSheets(contenidoQR);
         scanner.stop(); // Detener el escaneo después de un código QR exitoso
     });
-    Instascan.Camera.getCameras().then(function (cameras) {
-        var selectedCamera = cameras.length > 1 ? cameras[1] : cameras[0]; // Si hay más de una cámara, selecciona la segunda; de lo contrario, selecciona la primera
-        if (selectedCamera) {
-            scanner.start(selectedCamera); // Iniciar el escaneo con la cámara seleccionada
-        } else {
-            alert('No se detectó ninguna cámara en el dispositivo.');
-        }
-    }).catch(function (e) {
-        console.error(e);
-        alert('Error al acceder a la cámara: ' + e);
-    });
+
+    navigator.mediaDevices.enumerateDevices()
+        .then(devices => {
+            var cameras = devices.filter(device => device.kind === 'videoinput');
+            var selectedCamera = cameras.length > 1 ? cameras[1].deviceId : cameras[0].deviceId;
+
+            navigator.mediaDevices.getUserMedia({
+                    video: {
+                        deviceId: selectedCamera ? { exact: selectedCamera } : undefined,
+                        facingMode: 'environment' // Intenta usar la cámara trasera si está disponible
+                    }
+                })
+                .then(stream => {
+                    scanner.start(stream);
+                })
+                .catch(error => {
+                    console.error('Error al acceder a la cámara:', error);
+                    alert('Error al acceder a la cámara: ' + error);
+                });
+        })
+        .catch(error => {
+            console.error('Error al enumerar los dispositivos de medios:', error);
+            alert('Error al enumerar los dispositivos de medios: ' + error);
+        });
 }
+
 
 // Función para enviar los datos a Google Sheets
 function enviarDatosAGoogleSheets(contenidoQR) {
