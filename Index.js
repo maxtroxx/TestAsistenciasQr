@@ -3,22 +3,45 @@ function esDispositivoMovil() {
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 }
 
-// Función para inicializar la cámara
+// Función para inicializar la cámara y QuaggaJS
 function iniciarCamara() {
     if (esDispositivoMovil()) { // Si es un dispositivo móvil
         document.getElementById('capture').style.display = 'block'; // Mostrar el input con capture
         document.getElementById('preview').style.display = 'none'; // Ocultar la etiqueta de video
+        iniciarQuagga(); // Inicializar QuaggaJS para escanear códigos QR
     } else { // Si es de escritorio
         document.getElementById('capture').style.display = 'none'; // Ocultar el input con capture
         document.getElementById('preview').style.display = 'block'; // Mostrar la etiqueta de video
     }
 }
+// Función para inicializar QuaggaJS para escanear códigos QR
+function iniciarQuagga() {
+    Quagga.init({
+        inputStream: {
+            name: "Live",
+            type: "LiveStream",
+            target: document.querySelector('#capture'), // Utilizar el input capture como el target de la cámara
+            constraints: {
+                facingMode: "environment" // Usar la cámara trasera del dispositivo
+            }
+        },
+        decoder: {
+            readers: ["qrcode"] // Configurar QuaggaJS para escanear códigos QR
+        }
+    }, function(err) {
+        if (err) {
+            console.error('Error al inicializar Quagga:', err);
+            alert('Error al inicializar Quagga: ' + err.message);
+            return;
+        }
+        console.log('Quagga inicializado correctamente');
+        Quagga.start(); // Iniciar el escaneo de códigos QR
+    });
+}
 
 // Función para iniciar el escaneo del código QR
 function iniciarEscaneo() {
-    if (esDispositivoMovil()) { // Si es un dispositivo móvil
-        document.getElementById('capture').click(); // Hacer clic en el input para abrir la cámara
-    } else { // Si es de escritorio
+    if (!esDispositivoMovil()) { // Si no es un dispositivo móvil
         var scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
         var hoja = document.getElementById('hoja').value;
         scanner.addListener('scan', function (contenidoQR) {
@@ -42,6 +65,7 @@ function iniciarEscaneo() {
         });
     }
 }
+
 
 // Función para enviar datos a Google Sheets
 function enviarDatosAGoogleSheets(contenidoQR, hoja) {
