@@ -1,3 +1,4 @@
+// Función para detectar si es un dispositivo móvil
 function esDispositivoMovil() {
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 }
@@ -13,8 +14,9 @@ function iniciarCamara() {
     }
 }
 
-// Llamar a la función para inicializar la cámara cuando se cargue la página
-window.onload = iniciarCamara;
+// Llamar a la función para inicializar la cámara cuando se carga el DOM
+document.addEventListener('DOMContentLoaded', iniciarCamara);
+
 // Función para iniciar el escaneo del código QR
 function iniciarEscaneo() {
     var scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
