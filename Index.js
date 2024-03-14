@@ -1,3 +1,20 @@
+function esDispositivoMovil() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
+// Función para inicializar la cámara
+function iniciarCamara() {
+    if (esDispositivoMovil()) { // Si es un dispositivo móvil
+        document.getElementById('capture').style.display = 'block'; // Mostrar el input con capture
+        document.getElementById('preview').style.display = 'none'; // Ocultar la etiqueta de video
+    } else { // Si es de escritorio
+        document.getElementById('capture').style.display = 'none'; // Ocultar el input con capture
+        document.getElementById('preview').style.display = 'block'; // Mostrar la etiqueta de video
+    }
+}
+
+// Llamar a la función para inicializar la cámara cuando se cargue la página
+window.onload = iniciarCamara;
 // Función para iniciar el escaneo del código QR
 function iniciarEscaneo() {
     var scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
