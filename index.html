@@ -10,13 +10,8 @@
     <h1>Conexión con Google Sheets</h1>
     <div class="container">
         <div class="camera-container">
-            <!-- Reemplazar la etiqueta video con un input de tipo file -->
-            <input type="file" accept="image/*" capture="environment" id="preview" style="display: none;">
-            <!-- Mostrar una imagen de "cámara" que se puede hacer clic para activar la captura -->
-            <label for="preview" id="camera-label">
-                <img src="camera-icon.png" alt="Cámara">
-            </label>
-            <!-- Utiliza esta imagen solo como un marcador visual, puede personalizarla según tus necesidades -->
+            <video id="preview"></video>
+            <input type="file" accept="image/*" capture="environment" id="capture" style="display: none;"> <!-- Input oculto para abrir la cámara -->
         </div>
         <div class="controls">
             <label for="hoja">Selecciona la hoja:</label>
@@ -29,33 +24,8 @@
         </div>
     </div>
 
-    <script>
-        // Detectar si el dispositivo es móvil o de escritorio
-        var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-        // Función para cambiar el comportamiento del input file según el dispositivo
-        function changeInputType() {
-            if (isMobile) {
-                document.getElementById('preview').setAttribute('capture', 'environment');
-            } else {
-                document.getElementById('preview').removeAttribute('capture');
-            }
-        }
-
-        // Ejecutar la función al cargar la página
-        changeInputType();
-
-        // Escuchar el evento click en el botón de cámara
-        document.getElementById('camera-label').addEventListener('click', function() {
-            // Si el dispositivo es de escritorio, activar la captura de la cámara
-            console.log(isMobile);
-            if (!isMobile) {
-                document.getElementById('preview').click();
-            }
-        });
-    </script>
-
     <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
     <script src="Index.js"></script>
 </body>
 </html>
+
