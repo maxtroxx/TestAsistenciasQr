@@ -8,13 +8,22 @@
 </head>
 <body>
     <h1>Conexión con Google Sheets</h1>
-    <div class="camera-container">
-        <canvas id="preview"></canvas>
+    <div class="container">
+        <div class="camera-container">
+            <video id="preview"></video>
+        </div>
+        <div class="controls">
+            <label for="hoja">Selecciona la hoja:</label>
+            <select id="hoja">
+                <option value="Colmenas">Colmenas</option>
+                <option value="Actividad1">Actividad1</option>
+                <option value="Capacitacion">Capacitacion</option>
+            </select>
+            <button class="my-button" onclick="iniciarEscaneo()">Escanear código QR</button>
+        </div>
     </div>
-    <button class="my-button" onclick="iniciarEscaneo()">Escanear código QR</button>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/instascan/1.0.0/instascan.min.js"></script>
+    <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
     <script src="Index.js"></script>
 </body>
 </html>
-
