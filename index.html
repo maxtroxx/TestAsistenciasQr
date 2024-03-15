@@ -19,8 +19,9 @@
                 <option value="Actividad1">Actividad1</option>
                 <option value="Capacitacion">Capacitacion</option>
             </select>
-            <input type="file" id="capture" accept="image/*;capture=camera" style="display:none;">
-            <button class="my-button" onclick="iniciarEscaneo()">Escanear código QR</button>
+            <!-- Cambio aquí: type="button" -->
+            <button type="button" class="my-button" onclick="iniciarEscaneo()">Escanear código QR</button>
+            <!-- Fin del cambio -->
         </div>
     </div>
 
