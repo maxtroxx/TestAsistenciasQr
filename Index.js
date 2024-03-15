@@ -1,71 +1,33 @@
-// Función para detectar si es un dispositivo móvil
-function esDispositivoMovil() {
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-}
-
-// Función para inicializar la cámara y QuaggaJS
+// Función para inicializar la cámara
 function iniciarCamara() {
-    if (esDispositivoMovil()) { // Si es un dispositivo móvil
-        document.getElementById('capture').style.display = 'block'; // Mostrar el input con capture
-        document.getElementById('preview').style.display = 'none'; // Ocultar la etiqueta de video
-        iniciarQuagga(); // Inicializar QuaggaJS para escanear códigos QR
-    } else { // Si es de escritorio
-        document.getElementById('capture').style.display = 'none'; // Ocultar el input con capture
-        document.getElementById('preview').style.display = 'block'; // Mostrar la etiqueta de video
-    }
-}
-// Función para inicializar QuaggaJS para escanear códigos QR
-function iniciarQuagga() {
-    Quagga.init({
-        inputStream: {
-            name: "Live",
-            type: "LiveStream",
-            target: document.querySelector('#capture'), // Utilizar el input capture como el target de la cámara
-            constraints: {
-                facingMode: "environment" // Usar la cámara trasera del dispositivo
-            }
-        },
-        decoder: {
-            readers: ["qrcode"] // Configurar QuaggaJS para escanear códigos QR
-        }
-    }, function(err) {
-        if (err) {
-            console.error('Error al inicializar Quagga:', err);
-            alert('Error al inicializar Quagga: ' + err.message);
-            return;
-        }
-        console.log('Quagga inicializado correctamente');
-        Quagga.start(); // Iniciar el escaneo de códigos QR
-    });
+    document.getElementById('preview').style.display = 'none'; // Ocultar la etiqueta de video inicialmente
 }
 
 // Función para iniciar el escaneo del código QR
 function iniciarEscaneo() {
-    if (!esDispositivoMovil()) { // Si no es un dispositivo móvil
-        var scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
-        var hoja = document.getElementById('hoja').value;
-        scanner.addListener('scan', function (contenidoQR) {
-            // Una vez que se escanea el código QR, se envían los datos a Google Sheets
-            enviarDatosAGoogleSheets(contenidoQR, hoja);
-            scanner.stop(); // Detener el escaneo después de un código QR exitoso
-        });
-        Instascan.Camera.getCameras().then(function (cameras) {
-            if (cameras.length > 0) {
-                // Buscar la cámara trasera y usarla si está disponible
-                var camera = cameras.find(function (camera) {
-                    return camera.name.toLowerCase().includes('back') || camera.name.toLowerCase().includes('rear');
-                });
-                scanner.start(camera || cameras[0]); // Iniciar el escaneo con la cámara seleccionada
-            } else {
-                alert('No se detectó ninguna cámara en el dispositivo.');
-            }
-        }).catch(function (e) {
-            console.error(e);
-            alert('Error al acceder a la cámara: ' + e);
-        });
-    }
+    document.getElementById('camera-container').style.display = 'block'; // Mostrar la cámara al hacer clic en el botón
+    var scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
+    var hoja = document.getElementById('hoja').value;
+    scanner.addListener('scan', function (contenidoQR) {
+        // Una vez que se escanea el código QR, se envían los datos a Google Sheets
+        enviarDatosAGoogleSheets(contenidoQR, hoja);
+        scanner.stop(); // Detener el escaneo después de un código QR exitoso
+    });
+    Instascan.Camera.getCameras().then(function (cameras) {
+        if (cameras.length > 0) {
+            // Buscar la cámara trasera y usarla si está disponible
+            var camera = cameras.find(function (camera) {
+                return camera.name.toLowerCase().includes('back') || camera.name.toLowerCase().includes('rear');
+            });
+            scanner.start(camera || cameras[0]); // Iniciar el escaneo con la cámara seleccionada
+        } else {
+            alert('No se detectó ninguna cámara en el dispositivo.');
+        }
+    }).catch(function (e) {
+        console.error(e);
+        alert('Error al acceder a la cámara: ' + e);
+    });
 }
-
 
 // Función para enviar datos a Google Sheets
 function enviarDatosAGoogleSheets(contenidoQR, hoja) {
@@ -92,6 +54,10 @@ function enviarDatosAGoogleSheets(contenidoQR, hoja) {
         alert('Error al enviar datos a Google Sheets.');
     });
 }
+
+// Llamar a la función para inicializar la cámara cuando se carga el DOM
+document.addEventListener('DOMContentLoaded', iniciarCamara);
+
 
 // Llamar a la función para inicializar la cámara cuando se carga el DOM
 document.addEventListener('DOMContentLoaded', iniciarCamara);
