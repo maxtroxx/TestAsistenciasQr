@@ -83,4 +83,5 @@ document.getElementById('capture').addEventListener('change', function(e) {
 });
 
 // Llamar a la función para inicializar la
+document.addEventListener('DOMContentLoaded', iniciarCamara);
 
