@@ -70,5 +70,17 @@ function enviarDatosAGoogleSheets(contenidoQR, hoja) {
     });
 }
 
-// Llamar a la función para inicializar la cámara cuando se carga el DOM
-document.addEventListener('DOMContentLoaded', iniciarCamara);
+// Función para manejar la selección de la imagen (código QR) en dispositivos móviles
+document.getElementById('capture').addEventListener('change', function(e) {
+    var file = e.target.files[0];
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        var contenidoQR = e.target.result;
+        var hoja = document.getElementById('hoja').value;
+        enviarDatosAGoogleSheets(contenidoQR, hoja);
+    };
+    reader.readAsDataURL(file);
+});
+
+// Llamar a la función para inicializar la
+
