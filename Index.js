@@ -6,37 +6,41 @@ function esDispositivoMovil() {
 // Función para inicializar la cámara
 function iniciarCamara() {
     if (esDispositivoMovil()) { // Si es un dispositivo móvil
-        document.getElementById('capture').style.display = 'block'; // Mostrar el input con capture
+        document.getElementById('camera-container').style.display = 'block'; // Mostrar el container de la cámara
         document.getElementById('preview').style.display = 'none'; // Ocultar la etiqueta de video
     } else { // Si es de escritorio
-        document.getElementById('capture').style.display = 'none'; // Ocultar el input con capture
+        document.getElementById('camera-container').style.display = 'none'; // Ocultar el container de la cámara
         document.getElementById('preview').style.display = 'block'; // Mostrar la etiqueta de video
     }
 }
 
 // Función para iniciar el escaneo del código QR
 function iniciarEscaneo() {
-    var scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
-    var hoja = document.getElementById('hoja').value;
-    scanner.addListener('scan', function (contenidoQR) {
-        // Una vez que se escanea el código QR, se envían los datos a Google Sheets
-        enviarDatosAGoogleSheets(contenidoQR, hoja);
-        scanner.stop(); // Detener el escaneo después de un código QR exitoso
-    });
-    Instascan.Camera.getCameras().then(function (cameras) {
-        if (cameras.length > 0) {
-            // Buscar la cámara trasera y usarla si está disponible
-            var camera = cameras.find(function (camera) {
-                return camera.name.toLowerCase().includes('back') || camera.name.toLowerCase().includes('rear');
-            });
-            scanner.start(camera || cameras[0]); // Iniciar el escaneo con la cámara seleccionada
-        } else {
-            alert('No se detectó ninguna cámara en el dispositivo.');
-        }
-    }).catch(function (e) {
-        console.error(e);
-        alert('Error al acceder a la cámara: ' + e);
-    });
+    if (esDispositivoMovil()) { // Si es un dispositivo móvil
+        document.getElementById('capture').click(); // Hacer clic en el input para abrir la cámara
+    } else { // Si es de escritorio
+        var scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
+        var hoja = document.getElementById('hoja').value;
+        scanner.addListener('scan', function (contenidoQR) {
+            // Una vez que se escanea el código QR, se envían los datos a Google Sheets
+            enviarDatosAGoogleSheets(contenidoQR, hoja);
+            scanner.stop(); // Detener el escaneo después de un código QR exitoso
+        });
+        Instascan.Camera.getCameras().then(function (cameras) {
+            if (cameras.length > 0) {
+                // Buscar la cámara trasera y usarla si está disponible
+                var camera = cameras.find(function (camera) {
+                    return camera.name.toLowerCase().includes('back') || camera.name.toLowerCase().includes('rear');
+                });
+                scanner.start(camera || cameras[0]); // Iniciar el escaneo con la cámara seleccionada
+            } else {
+                alert('No se detectó ninguna cámara en el dispositivo.');
+            }
+        }).catch(function (e) {
+            console.error(e);
+            alert('Error al acceder a la cámara: ' + e);
+        });
+    }
 }
 
 // Función para enviar datos a Google Sheets
@@ -66,15 +70,17 @@ function enviarDatosAGoogleSheets(contenidoQR, hoja) {
     });
 }
 
-// Llamar a la función para inicializar la cámara cuando se carga el DOM
-document.addEventListener('DOMContentLoaded', iniciarCamara);
-
-// Agregar evento click al botón "Escanear código QR"
-document.getElementById('scan-btn').addEventListener('click', function() {
-    iniciarEscaneo();
+// Función para manejar la selección de la imagen (código QR) en dispositivos móviles
+document.getElementById('capture').addEventListener('change', function(e) {
+    var file = e.target.files[0];
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        var contenidoQR = e.target.result;
+        var hoja = document.getElementById('hoja').value;
+        enviarDatosAGoogleSheets(contenidoQR, hoja);
+    };
+    reader.readAsDataURL(file);
 });
 
-
-// Llamar a la función para inicializar la
+// Llamar a la función para inicializar la cámara cuando se carga el DOM
 document.addEventListener('DOMContentLoaded', iniciarCamara);
-
