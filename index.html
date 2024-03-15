@@ -11,6 +11,7 @@
     <div class="container">
         <div class="camera-container" id="camera-container">
             <video id="preview" autoplay></video>
+            <input type="file" id="capture" accept="image/*" capture="environment">
         </div>
         <div class="controls">
             <label for="hoja">Selecciona la hoja:</label>
@@ -19,9 +20,7 @@
                 <option value="Actividad1">Actividad1</option>
                 <option value="Capacitacion">Capacitacion</option>
             </select>
-            <!-- Cambio aquí: type="button" -->
             <button type="button" class="my-button" onclick="iniciarEscaneo()">Escanear código QR</button>
-            <!-- Fin del cambio -->
         </div>
     </div>
 
