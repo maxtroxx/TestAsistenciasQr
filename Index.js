@@ -1,8 +1,3 @@
-// Función para detectar si es un dispositivo móvil
-function esDispositivoMovil() {
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-}
-
 // Función para inicializar la cámara
 function iniciarCamara() {
     if (esDispositivoMovil()) { // Si es un dispositivo móvil
@@ -19,20 +14,41 @@ function iniciarEscaneo() {
     if (esDispositivoMovil()) { // Si es un dispositivo móvil
         document.getElementById('capture').click(); // Hacer clic en el input para abrir la cámara
     } else { // Si es de escritorio
-        var scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
+        var video = document.getElementById('preview');
+        var canvas = document.getElementById('canvas');
+        var context = canvas.getContext('2d');
         var hoja = document.getElementById('hoja').value;
-        scanner.addListener('scan', function (contenidoQR) {
-            // Una vez que se escanea el código QR, se envían los datos a Google Sheets
-            enviarDatosAGoogleSheets(contenidoQR, hoja);
-            scanner.stop(); // Detener el escaneo después de un código QR exitoso
-        });
+
         Instascan.Camera.getCameras().then(function (cameras) {
             if (cameras.length > 0) {
-                // Buscar la cámara trasera y usarla si está disponible
+                var scanner = new Instascan.Scanner({ video: video });
+                scanner.addListener('scan', function (contenidoQR) {
+                    // Una vez que se escanea el código QR, se envían los datos a Google Sheets
+                    enviarDatosAGoogleSheets(contenidoQR, hoja);
+                    scanner.stop(); // Detener el escaneo después de un código QR exitoso
+                });
+
+                // Obtener la cámara trasera
                 var camera = cameras.find(function (camera) {
                     return camera.name.toLowerCase().includes('back') || camera.name.toLowerCase().includes('rear');
                 });
-                scanner.start(camera || cameras[0]); // Iniciar el escaneo con la cámara seleccionada
+
+                // Iniciar la cámara
+                scanner.start(camera || cameras[0]);
+
+                // Capturar el flujo de video y procesarlo con jsQR
+                function capturarYProcesar() {
+                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                    var code = jsQR(imageData.data, imageData.width, imageData.height);
+                    if (code) {
+                        // Si se detecta un código QR, enviar los datos a Google Sheets
+                        enviarDatosAGoogleSheets(code.data, hoja);
+                    }
+                    requestAnimationFrame(capturarYProcesar);
+                }
+
+                requestAnimationFrame(capturarYProcesar);
             } else {
                 alert('No se detectó ninguna cámara en el dispositivo.');
             }
@@ -59,28 +75,20 @@ function enviarDatosAGoogleSheets(contenidoQR, hoja) {
         if (response.ok) {
             alert('Datos enviados correctamente a Google Sheets.');
         } else {
-            console.log("Hola1");
+            console.log("Error al enviar datos a Google Sheets.");
             alert('Error al enviar datos a Google Sheets.');
         }
     })
     .catch(function(error) {
-        console.log("Hola2");
-        console.error('Error:', error);
+        console.error('Error al enviar datos a Google Sheets:', error);
         alert('Error al enviar datos a Google Sheets.');
     });
 }
 
-// Función para manejar la selección de la imagen (código QR) en dispositivos móviles
-document.getElementById('capture').addEventListener('change', function(e) {
-    var file = e.target.files[0];
-    var reader = new FileReader();
-    reader.onload = function(e) {
-        var contenidoQR = e.target.result;
-        var hoja = document.getElementById('hoja').value;
-        enviarDatosAGoogleSheets(contenidoQR, hoja);
-    };
-    reader.readAsDataURL(file);
-});
+// Función para detectar si es un dispositivo móvil
+function esDispositivoMovil() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
 
 // Llamar a la función para inicializar la cámara cuando se carga el DOM
 document.addEventListener('DOMContentLoaded', iniciarCamara);
