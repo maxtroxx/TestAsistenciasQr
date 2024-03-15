@@ -9,9 +9,8 @@
 <body>
     <h1>Conexión con Google Sheets</h1>
     <div class="container">
-        <div class="camera-container">
+        <div class="camera-container" id="camera-container">
             <video id="preview"></video>
-            <input type="file" accept="image/*" capture="environment" id="capture" style="display: none;"> <!-- Input oculto para abrir la cámara -->
         </div>
         <div class="controls">
             <label for="hoja">Selecciona la hoja:</label>
@@ -22,11 +21,10 @@
             </select>
             <button class="my-button" onclick="iniciarEscaneo()">Escanear código QR</button>
         </div>
+        <input type="file" id="capture" accept="image/*;capture=camera" style="display:none;">
     </div>
 
     <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/quagga/dist/quagga.min.js"></script>
     <script src="Index.js"></script>
 </body>
 </html>
-
