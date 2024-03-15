@@ -11,6 +11,7 @@
     <div class="container">
         <div class="camera-container" id="camera-container">
             <video id="preview" autoplay></video>
+            <canvas id="canvas" style="display: none;"></canvas>
             <input type="file" id="capture" accept="image/*" capture="environment">
         </div>
         <div class="controls">
@@ -25,6 +26,7 @@
     </div>
 
     <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
+    <script src="jsQR.js"></script>
     <script src="Index.js"></script>
 </body>
 </html>
